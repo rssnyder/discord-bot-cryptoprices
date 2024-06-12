@@ -51,7 +51,7 @@ helm repo add discord-bot-cryptoprices https://rssnyder.github.io/discord-bot-cr
 
 helm repo update discord-bot-cryptoprices
 
-helm upgrade -i discord-bot-cryptoprices --namespace discord-bot-cryptoprices --create-namespace \
+helm upgrade -i eth --namespace discord-bot-cryptoprices --create-namespace \
   discord-bot-cryptoprices/discord-bot-cryptoprices \
   --set token=xxxx-xxx-xxx-xxxx \
   --set symbol=ETH

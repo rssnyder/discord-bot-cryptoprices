@@ -7,9 +7,9 @@ status: 2
 refresh: 120
 
 image:
-  repository: rssnyder/discord-bot-cryptoprices
+  repository: ghcr.io/rssnyder/discord-bot-cryptoprices
   pullPolicy: IfNotPresent
-  tag: "a47bdbea290be24d25466227e9526ea7ab4b5cf6"
+  tag:
 
 imagePullSecrets: []
 nameOverride: ""
