@@ -1,14 +1,24 @@
-FROM golang:1.22-alpine as golang
-LABEL org.opencontainers.image.source https://github.com/rssnyder/discord-bot-cryptoprices
+FROM golang:1.22-alpine as base
 
-WORKDIR /app
+LABEL org.opencontainers.image.source = "https://github.com/rssnyder/discord-bot-cryptoprices"
 
-COPY go.mod ./
-COPY go.sum ./
+RUN apk --update add ca-certificates
+
+WORKDIR $GOPATH/src/discord-bot-cryptoprices/app/
+
+COPY . .
+
 RUN go mod download
+RUN go mod verify
 
-COPY *.go ./
+RUN go build -o /discord-bot-cryptoprices .
 
-RUN go build -o /discord-bot
+FROM scratch
 
-ENTRYPOINT /discord-bot
+COPY --from=base /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=base /etc/passwd /etc/passwd
+COPY --from=base /etc/group /etc/group
+
+COPY --from=base /discord-bot-cryptoprices .
+
+CMD ["./discord-bot-cryptoprices"]

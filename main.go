@@ -93,58 +93,55 @@ func main() {
 	activityOptions := len(activities)
 	activitySelection := 0
 
-	for {
-		select {
-		case <-ticker.C:
+	defer ticker.Stop()
+	for ; true; <-ticker.C {
+		if price, err = GetCryptoPrices(*symbol, ""); err != nil {
+			log.Println(err)
+			continue
+		}
+		nickname = fmt.Sprintf("%s %s", *nicknameHeader, formatNicknameUnit(price, p))
 
-			if price, err = GetCryptoPrices(*symbol, ""); err != nil {
-				log.Println(err)
-				continue
-			}
-			nickname = fmt.Sprintf("%s %s", *nicknameHeader, formatNicknameUnit(price, p))
-
-			if *setNickname != "" {
-				for _, g := range guilds {
-					err = dg.GuildMemberNickname(g.ID, "@me", nickname)
-					if err != nil {
-						log.Println(err)
-					} else {
-						log.Printf("Set nickname in %s: %s\n", g.Name, nickname)
-						updates.Inc()
-					}
-				}
-			} else {
-				err = setActivity(dg, nickname, statusCode)
+		if *setNickname != "" {
+			for _, g := range guilds {
+				err = dg.GuildMemberNickname(g.ID, "@me", nickname)
 				if err != nil {
-					log.Printf("Unable to set activity: %s\n", err)
+					log.Println(err)
 				} else {
-					log.Printf("Set activity: %s\n", nickname)
+					log.Printf("Set nickname in %s: %s\n", g.Name, nickname)
 					updates.Inc()
 				}
-				continue
 			}
-
-			if activitySelection < activityOptions {
-				if activityAmt, err = GetCryptoPrices(*symbol, activities[activitySelection]); err != nil {
-					log.Println(err)
-					continue
-				}
-				activity = fmt.Sprintf("%s: %s", activities[activitySelection], formatActivityUnit(activityAmt, p))
-				activitySelection++
-			} else {
-				if *activityMsg != "" {
-					activity = *activityMsg
-				}
-				activitySelection = 0
-			}
-
-			err = setActivity(dg, activity, statusCode)
+		} else {
+			err = setActivity(dg, nickname, statusCode)
 			if err != nil {
 				log.Printf("Unable to set activity: %s\n", err)
 			} else {
-				log.Printf("Set activity: %s\n", activity)
+				log.Printf("Set activity: %s\n", nickname)
 				updates.Inc()
 			}
+			continue
+		}
+
+		if activitySelection < activityOptions {
+			if activityAmt, err = GetCryptoPrices(*symbol, activities[activitySelection]); err != nil {
+				log.Println(err)
+				continue
+			}
+			activity = fmt.Sprintf("%s: %s", activities[activitySelection], formatActivityUnit(activityAmt, p))
+			activitySelection++
+		} else {
+			if *activityMsg != "" {
+				activity = *activityMsg
+			}
+			activitySelection = 0
+		}
+
+		err = setActivity(dg, activity, statusCode)
+		if err != nil {
+			log.Printf("Unable to set activity: %s\n", err)
+		} else {
+			log.Printf("Set activity: %s\n", activity)
+			updates.Inc()
 		}
 	}
 }
@@ -163,6 +160,8 @@ func formatActivityUnit(raw float64, printer *message.Printer) (units string) {
 	switch {
 	case raw < 1:
 		units = printer.Sprintf("$%.6f", raw)
+	case raw < 1000:
+		units = printer.Sprintf("$%.2f", raw)
 	case raw < 100000:
 		units = printer.Sprintf("$%.0f", raw)
 	case raw < 1000000:
