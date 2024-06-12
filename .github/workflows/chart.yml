@@ -4,7 +4,7 @@ on:
       ref:
         type: string
         required: true
-        default: 'main'
+        default: 'master'
 
 jobs:
   release:
@@ -29,6 +29,6 @@ jobs:
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         with:
-          pages_branch: deploy-chart
+          pages_branch: master
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
