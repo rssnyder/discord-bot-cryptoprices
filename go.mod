@@ -1,10 +1,11 @@
-module github.com/rssnyder/discord-bot
+module github.com/rssnyder/discord-bot-cryptoprices
 
-go 1.19
+go 1.22
 
 require (
 	github.com/bwmarrin/discordgo v0.27.0
 	github.com/prometheus/client_golang v1.15.1
+	golang.org/x/text v0.7.0
 )
 
 require (

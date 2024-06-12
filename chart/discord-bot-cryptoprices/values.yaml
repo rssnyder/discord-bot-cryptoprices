@@ -1,0 +1,40 @@
+token:
+symbol:
+setNickname: "true"
+nicknameHeader: ""
+activityMsg: ""
+status: 2
+refresh: 120
+
+image:
+  repository: rssnyder/discord-bot-cryptoprices
+  pullPolicy: IfNotPresent
+  tag: "a47bdbea290be24d25466227e9526ea7ab4b5cf6"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations:
+  prometheus.io/path: /metrics
+  prometheus.io/port: "8080"
+  prometheus.io/scrape: "true"
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+resources:
+  limits:
+    cpu: 10m
+    memory: 8Mi
+  requests:
+    cpu: 1m
+    memory: 6Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
