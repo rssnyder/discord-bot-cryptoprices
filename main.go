@@ -138,7 +138,7 @@ func main() {
 				activitySelection = 0
 			}
 
-			setActivity(dg, activity, statusCode)
+			err = setActivity(dg, activity, statusCode)
 			if err != nil {
 				log.Printf("Unable to set activity: %s\n", err)
 			} else {
