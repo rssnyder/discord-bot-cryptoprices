@@ -1,8 +1,8 @@
 token:
 symbol:
 setNickname: "true"
-nicknameHeader:
-activityMsg:
+nicknameHeader: ""
+activityMsg: ""
 status: 2
 refresh: 120
 

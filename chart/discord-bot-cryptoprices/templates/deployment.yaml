@@ -17,7 +17,7 @@ spec:
       {{- end }}
       labels:
         {{- include "discord-bot-cryptoprices.labels" . | nindent 8 }}
-	{{- with .Values.podLabels }}
+	      {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
@@ -38,33 +38,29 @@ spec:
               containerPort: 8080
               protocol: TCP
           env:
-          {{- with .Values.token }}
           - name: TOKEN
             value: {{ .Values.token }}
-          {{- end -}}
-          {{- with .Values.symbol }}
           - name: SYMBOL
             value: {{ .Values.symbol }}
-          {{- end -}}
-          {{- with .Values.setNickname }}
+          {{- if .Values.setNickname }}
           - name: SET_NICKNAME
-            value: {{ .Values.setNickname }}
+            value: "{{ .Values.setNickname }}"
           {{- end -}}
-          {{- with .Values.nicknameHeader }}
+          {{- if .Values.nicknameHeader }}
           - name: NICKNAME_HEADER
             value: {{ .Values.nicknameHeader }}
           {{- end -}}
-          {{- with .Values.activityMsg }}
+          {{- if .Values.activityMsg }}
           - name: ACTIVITY_MSG
             value: {{ .Values.activityMsg }}
           {{- end -}}
-          {{- with .Values.status }}
+          {{- if .Values.status }}
           - name: STATUS
-            value: {{ .Values.status }}
+            value: "{{ .Values.status }}"
           {{- end -}}
-          {{- with .Values.refresh }}
+          {{- if .Values.refresh }}
           - name: REFRESH
-            value: {{ .Values.refresh }}
+            value: "{{ .Values.refresh }}"
           {{- end -}}
           # livenessProbe:
           #   httpGet:
@@ -76,7 +72,6 @@ spec:
           #     port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
