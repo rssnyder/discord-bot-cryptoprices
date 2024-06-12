@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   discord-bot-cryptoprices:
   - apiVersion: v2
+    appVersion: 0.0.2
+    created: "2024-06-12T23:06:54.459113735Z"
+    description: A Helm chart for Kubernetes
+    digest: 1f923e6f4e40684378f90407fd974f7b649034dad6bcc402f4e80ef54fbf8c27
+    name: discord-bot-cryptoprices
+    type: application
+    urls:
+    - https://github.com/rssnyder/discord-bot-cryptoprices/releases/download/discord-bot-cryptoprices-0.0.2/discord-bot-cryptoprices-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
     appVersion: 0.0.1
     created: "2024-06-12T01:54:23.918281436Z"
     description: A Helm chart for Kubernetes
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://github.com/rssnyder/discord-bot-cryptoprices/releases/download/discord-bot-cryptoprices-0.0.1/discord-bot-cryptoprices-0.0.1.tgz
     version: 0.0.1
-generated: "2024-06-12T01:54:23.918309479Z"
+generated: "2024-06-12T23:06:54.459122812Z"
