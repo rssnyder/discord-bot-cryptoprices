@@ -22,7 +22,7 @@ var token, symbol, setNickname, nicknameHeader, activityMsg, status, refresh, me
 var statusCode, refreshSec int
 var price, activityAmt float64
 var err error
-var updates prometheus.Counter
+var nicknameUpdates, activityUpdates, botSymbol prometheus.Counter
 
 func init() {
 	token = flag.String("token", getEnv("TOKEN", ""), "discord bot token")
@@ -44,14 +44,30 @@ func init() {
 		refreshSec = 120
 	}
 
-	updates = prometheus.NewCounter(
+	nicknameUpdates = prometheus.NewCounter(
 		prometheus.CounterOpts{
-			Name: "updates",
-			Help: "Number of times discord has been updated",
+			Name: "nickname_updates",
+			Help: "Number of times discord nickname has been updated",
+		},
+	)
+	activityUpdates = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "activity_updates",
+			Help: "Number of times discord activity has been updated",
+		},
+	)
+	botSymbol = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name:        "bot_symbol",
+			Help:        "Exposes the symbol this bot is for",
+			ConstLabels: prometheus.Labels{"symbol": *symbol},
 		},
 	)
 	reg := prometheus.NewRegistry()
-	reg.MustRegister(updates)
+	reg.MustRegister(nicknameUpdates)
+	reg.MustRegister(activityUpdates)
+	reg.MustRegister(botSymbol)
+	botSymbol.Inc()
 	http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
 	go func() {
 		log.Fatal(http.ListenAndServe(*metrics, nil))
@@ -70,6 +86,13 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+
+	botUser, err := dg.User("@me")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	log.Printf("Running as %s", botUser.ID)
 
 	guilds, err := dg.UserGuilds(100, "", "")
 	if err != nil {
@@ -108,7 +131,7 @@ func main() {
 					log.Println(err)
 				} else {
 					log.Printf("Set nickname in %s: %s\n", g.Name, nickname)
-					updates.Inc()
+					nicknameUpdates.Inc()
 				}
 			}
 		} else {
@@ -117,7 +140,7 @@ func main() {
 				log.Printf("Unable to set activity: %s\n", err)
 			} else {
 				log.Printf("Set activity: %s\n", nickname)
-				updates.Inc()
+				activityUpdates.Inc()
 			}
 			continue
 		}
@@ -141,7 +164,7 @@ func main() {
 			log.Printf("Unable to set activity: %s\n", err)
 		} else {
 			log.Printf("Set activity: %s\n", activity)
-			updates.Inc()
+			activityUpdates.Inc()
 		}
 	}
 }
