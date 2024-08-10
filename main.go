@@ -113,6 +113,7 @@ func main() {
 	nickname := ""
 
 	activities := []string{"ATH", "MCAP"}
+	activityFmt := ""
 	activityOptions := len(activities)
 	activitySelection := 0
 
@@ -122,7 +123,7 @@ func main() {
 			log.Println(err)
 			continue
 		}
-		nickname = fmt.Sprintf("%s %s", *nicknameHeader, formatNicknameUnit(price, p))
+		nickname = fmt.Sprintf("%s %s", *nicknameHeader, formatPriceUnit(price, p))
 
 		if *setNickname != "" {
 			for _, g := range guilds {
@@ -150,7 +151,13 @@ func main() {
 				log.Println(err)
 				continue
 			}
-			activity = fmt.Sprintf("%s: %s", activities[activitySelection], formatActivityUnit(activityAmt, p))
+			switch {
+			case activities[activitySelection] == "ATH":
+				activityFmt = formatPriceUnit(activityAmt, p)
+			case activities[activitySelection] == "MCAP":
+				activityFmt = formatMcapUnit(activityAmt, p)
+			}
+			activity = fmt.Sprintf("%s: %s", activities[activitySelection], activityFmt)
 			activitySelection++
 		} else {
 			if *activityMsg != "" {
@@ -169,17 +176,24 @@ func main() {
 	}
 }
 
-func formatNicknameUnit(raw float64, printer *message.Printer) (units string) {
-	if raw > 1 {
+func formatPriceUnit(raw float64, printer *message.Printer) (units string) {
+	switch {
+	case raw > 10000:
 		units = printer.Sprintf("$%.0f", raw)
-	} else {
+	case raw > 1:
+		units = printer.Sprintf("$%.2f", raw)
+	case raw < 0.00001:
+		units = fmt.Sprintf("$0.0₅%.0f", raw*1000000000)
+	case raw < 0.000001:
+		units = fmt.Sprintf("$0.0₆%.0f", raw*10000000000)
+	default:
 		units = printer.Sprintf("$%f", raw)
 	}
 
 	return
 }
 
-func formatActivityUnit(raw float64, printer *message.Printer) (units string) {
+func formatMcapUnit(raw float64, printer *message.Printer) (units string) {
 	switch {
 	case raw < 1:
 		units = printer.Sprintf("$%.6f", raw)
