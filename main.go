@@ -182,10 +182,10 @@ func formatPriceUnit(raw float64, printer *message.Printer) (units string) {
 		units = printer.Sprintf("$%.0f", raw)
 	case raw > 1:
 		units = printer.Sprintf("$%.2f", raw)
-	case raw < 0.00001:
-		units = fmt.Sprintf("$0.0₅%.0f", raw*1000000000)
 	case raw < 0.000001:
 		units = fmt.Sprintf("$0.0₆%.0f", raw*10000000000)
+	case raw < 0.00001:
+		units = fmt.Sprintf("$0.0₅%.0f", raw*1000000000)
 	default:
 		units = printer.Sprintf("$%f", raw)
 	}
